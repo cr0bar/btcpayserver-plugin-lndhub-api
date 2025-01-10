@@ -197,7 +197,7 @@ public class LndHubApiController(
         try
         {
             var invoice = await client.GetLightningInvoice(storeId, CryptoCode, paymentHash, cancellationToken);
-            result.Paid = invoice.Status == LightningInvoiceStatus.Complete;
+            result.Paid = invoice.Status == LightningInvoiceStatus.Paid;
             return Ok(result);
         }
         catch (Exception)
