@@ -189,6 +189,23 @@ public class LndHubApiController(
         }
     }
 
+    [HttpGet("checkinvoice/{paymentHash}")]
+    public async Task<IActionResult> CheckInvoice(string storeId, string paymentHash, CancellationToken cancellationToken = default)
+    {
+        var client = await Client();
+        var result = new CheckPaymentResponse { Paid = false };
+        try
+        {
+            var payment = await client.GetLightningInvoice(storeId, CryptoCode, paymentHash, cancellationToken);
+            result.Paid = payment.Status == LightningPaymentStatus.Complete;
+            return Ok(result);
+        }
+        catch (Exception)
+        {
+            return NotFound(result);
+        }
+    }
+    
     // https://github.com/BlueWallet/LndHub/blob/master/doc/Send-requirements.md#post-addinvoice
     [HttpPost("addinvoice")]
     public async Task<IActionResult> AddInvoice(string storeId, CreateInvoiceRequest request, CancellationToken cancellationToken = default)
